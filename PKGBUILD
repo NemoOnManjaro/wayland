@@ -3,7 +3,7 @@
 # Contributor: Joel Teichroeb <joel@teichroeb.net>
 
 pkgbase=wayland
-pkgname=(wayland wayland-docs)
+pkgname=(wayland)
 pkgver=1.24.0
 pkgrel=1
 pkgdesc='A computer display server protocol'
@@ -12,15 +12,11 @@ url='https://wayland.freedesktop.org/'
 license=('MIT')
 depends=('glibc' 'libffi' 'expat' 'libxml2' 'default-cursors')
 makedepends=('meson' 'libxslt' 'doxygen' 'xmlto' 'graphviz' 'docbook-xsl')
-validpgpkeys=('C7223EBE4EF66513B892598911A30156E0E67611'  # Bryce Harrington
-              'C0066D7DB8E9AC6844D728715E54498E697F11D7'  # Derek Foreman
-              '34FF9526CFEF0E97A340E2E40FDE7BE0E88F5E48') # emersion <contact@emersion.fr>
-source=("https://gitlab.freedesktop.org/wayland/wayland/-/releases/$pkgver/downloads/wayland-$pkgver.tar.xz"{,.sig})
-sha256sums=('82892487a01ad67b334eca83b54317a7c86a03a89cfadacfef5211f11a5d0536'
-            'SKIP')
+source=("https://gitlab.freedesktop.org/wayland/wayland/-/releases/$pkgver/downloads/wayland-$pkgver.tar.xz")
+sha256sums=('82892487a01ad67b334eca83b54317a7c86a03a89cfadacfef5211f11a5d0536')
 
 build() {
-  arch-meson $pkgbase-$pkgver build
+  arch-meson $pkgbase-$pkgver build -Ddocumentation=false
   meson compile -C build
 }
 
@@ -32,17 +28,6 @@ package_wayland() {
   provides=(libwayland-{client,cursor,egl,server}.so)
 
   meson install -C build --destdir "$pkgdir"
-  mkdir -p docs/share
-  mv "$pkgdir"/usr/share/{doc,man} docs/share
-  install -Dm 644 $pkgbase-$pkgver/COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
-}
-
-package_wayland-docs() {
-  pkgdesc+=" (documentation)"
-  depends=()
-
-  mv docs "$pkgdir/usr"
-  install -Dm 644 $pkgbase-$pkgver/COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
 }
 
 # vim:set sw=2 sts=-1 et:
